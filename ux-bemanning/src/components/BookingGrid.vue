@@ -85,13 +85,7 @@ function getBookingLabel(bookings, date) {
 
 
 .grid-container {
-    overflow-x: auto;
     background-color: rgb(178, 177, 174, 89);
-}
-
-table {
-    border-collapse: collapse;
-    width: 100%;
 }
 
 
@@ -126,9 +120,8 @@ td {
   border-radius: 10px;
   height: 48px;
   background-color: #f5f5f5;
-  box-shadow: 0 0 0 1px #ddd inset;
+ 
 }
-
 
 .date-box {
   background: rgb(255, 255, 255);
