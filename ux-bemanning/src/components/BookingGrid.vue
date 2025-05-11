@@ -1,93 +1,87 @@
 <template>
-    <div class="grid-container">
-        <table>
-            <thead>
-                <tr>
-                    <th class="sticky-header">Anställd</th>
-                    <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
-                        <div class="day">{{ formatDay(date) }}</div>
-                        <div class="date">{{ formatDate(date) }}</div>
-                    </th>
-                </tr>
-            </thead>
-
-
-            <tbody>
-                <tr v-for="person in bookings" :key="person.name">
-                    <td class="person-cell">
-                        <strong>{{ person.name }}</strong><br />
-                        <small>{{ person.professions.join(' / ') }}</small>
-                    </td>
-                    <td v-for="date in dateRange" :key="date" class="cell"
-                        :class="getBookingClass(person.bookings, date)">
-                        {{ getBookingLabel(person.bookings, date) }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  <div class="grid-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="sticky-header">Anställd</th>
+          <th
+            v-for="date in dateRange"
+            :key="date"
+            class="date-box"
+            :class="{ today: isToday(date) }"
+          >
+            <div class="day">{{ formatDay(date) }}</div>
+            <div class="date">{{ formatDate(date) }}</div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="person in bookings" :key="person.name">
+          <td class="person-cell">
+            <strong>{{ person.name }}</strong><br />
+            <small>{{ person.professions.join(' / ') }}</small>
+          </td>
+          <td
+            v-for="date in dateRange"
+            :key="date"
+            class="cell"
+            :class="getBookingClass(person.bookings, date)"
+          >
+            {{ getBookingLabel(person.bookings, date) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
-
 <script setup>
-import { computed } from 'vue';
-import { format, addDays } from 'date-fns';
+import { format, parseISO, isWeekend } from 'date-fns'
 import { sv } from 'date-fns/locale'
 
-
 const props = defineProps({
-    bookings: Array,
-    dateRange: Array
+  bookings: Array,
+  dateRange: Array
 })
-
 
 function isToday(date) {
   const today = format(new Date(), 'yyyy-MM-dd')
   return date === today
 }
 
-
 function formatDate(date) {
-    if (!date) return '';
-    return format(parseISO(date), 'd');
+  return format(parseISO(date), 'd')
 }
-
-import { parseISO } from 'date-fns';
 
 function formatDay(date) {
-    if (!date) return '';
-    return format(parseISO(date), 'EEE', { locale: sv });
+  return format(parseISO(date), 'EEE', { locale: sv })
 }
 
-
-
 function getBookingClass(bookings, date) {
-    if (!date) return '';
-    const dateStr = format(parseISO(date), 'yyyy-MM-dd');
-    const booking = bookings.find(b => b.date === dateStr);
-    if (!booking) return 'ledig';
-    if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50';
-    if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50';
-    if (booking.type === 'absence') return 'franvaro';
-    return '';
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
+  const booking = bookings.find(b => b.date === dateStr)
+  if (!booking || isWeekend(parseISO(date))) return ''
+  if (booking.type === 'absence') return ''
+  if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50'
+  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50'
+  return ''
 }
 
 function getBookingLabel(bookings, date) {
-    if (!date) return '';
-    const dateStr = format(parseISO(date), 'yyyy-MM-dd');
-    const booking = bookings.find(b => b.date === dateStr);
-    return booking ? `${booking.percentage}%` : '';
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
+  const booking = bookings.find(b => b.date === dateStr)
+  if (!booking || isWeekend(parseISO(date))) return ''
+  if (booking.type === 'absence') return 'Frånvaro'
+  if (booking.type === 'booked') return booking.percentage === 100 ? 'Bokad' : 'Bokad 50%'
+  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'Prelim 100%' : 'Prelim 50%'
+  return ''
 }
-
 </script>
 
 <style scoped>
-
-
 .grid-container {
-    background-color: rgb(178, 177, 174, 89);
+  background-color: rgb(178, 177, 174, 0.89);
 }
-
 
 th,
 td {
@@ -97,7 +91,6 @@ td {
   color: black;
   border: none;
 }
-
 
 .person-cell {
   background-color: #fff;
@@ -113,29 +106,52 @@ td {
   text-align: left;
 }
 
-
-
 .cell {
   margin: 6px;
   border-radius: 10px;
   height: 48px;
   background-color: #f5f5f5;
- 
+  justify-content: center;
+  align-items: center;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bokad100 {
+  background-color: rgb(173, 5, 7);
+  color: white;
+}
+.bokad50 {
+  background-color: rgb(218, 74, 76);
+  color: white;
+}
+.prelim100 {
+  background-color: rgb(255, 208, 53);
+  color: black;
+}
+.prelim50 {
+  background-color: rgb(255, 237, 149);
+  color: black;
+}
+.ledig {
+  background-color: rgb(173, 243, 185);
+  color: black;
 }
 
 .date-box {
   background: rgb(255, 255, 255);
   border-radius: 6px;
   padding: 4px 0;
-  width: 52px;
+  width: 70px;
   height: 52px;
   font-size: 12px;
   font-weight: 500;
   color: #333;
   margin: 4px auto;
 }
-
-
 
 .date-box .day {
   font-size: 11px;
@@ -151,6 +167,4 @@ td {
   background-color: #7b5cd6;
   color: white;
 }
-
-
 </style>

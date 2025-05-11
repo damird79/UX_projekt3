@@ -8,37 +8,46 @@ import { fetchBookings } from './services/bookingService'
 import BookingGrid from './components/BookingGrid.vue'
 import { format, parseISO, eachDayOfInterval } from 'date-fns'
 
-
 const bookings = ref([])
 const dateRange = ref([])
 
+function mockType() {
+  const types = ['booked', 'preliminary', 'absence', 'free']
+  return types[Math.floor(Math.random() * types.length)]
+}
+
+function mockPercentage(type) {
+  if (type === 'absence') return 100
+  if (type === 'free') return 0
+  if (type === 'booked' || type === 'preliminary') return Math.random() > 0.5 ? 100 : 50
+  return 0
+}
 
 onMounted(async () => {
-  const start = '2025-04-07';
-  const end = '2025-05-05';
+  const start = '2025-04-07'
+  const end = '2025-05-05'
 
-  const data = await fetchBookings(start, end);
-  bookings.value = data;
+  const data = await fetchBookings(start, end)
 
-  // 🧠 Extrahera alla unika datum från bokningarnas intervall
-  const dates = new Set();
+  const allDates = eachDayOfInterval({ start: parseISO(start), end: parseISO(end) })
+    .map(d => format(d, 'yyyy-MM-dd'))
 
   data.forEach(person => {
-    person.bookings.forEach(b => {
-      if (b.from && b.to) {
-        const from = parseISO(b.from);
-        const to = parseISO(b.to);
-        const days = eachDayOfInterval({ start: from, end: to });
+    const bookedDates = new Set(person.bookings.map(b => format(parseISO(b.date || b.from), 'yyyy-MM-dd')))
 
-        days.forEach(d => {
-          dates.add(format(d, 'yyyy-MM-dd'));
-        });
+    allDates.forEach(date => {
+      if (!bookedDates.has(date)) {
+        const type = mockType()
+        person.bookings.push({
+          date,
+          type,
+          percentage: mockPercentage(type),
+        })
       }
-    });
-  });
+    })
+  })
 
-  dateRange.value = Array.from(dates).sort();
-  console.log('✅ dateRange:', dateRange.value);
-});
-
+  bookings.value = data
+  dateRange.value = allDates
+})
 </script>
