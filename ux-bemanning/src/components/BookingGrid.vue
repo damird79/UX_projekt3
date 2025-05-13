@@ -1,20 +1,31 @@
 <template>
   <div class="grid-container">
     <table>
-      <thead>
-        <tr>
-          <th class="sticky-header">Anställd</th>
-          <th
-            v-for="date in dateRange"
-            :key="date"
-            class="date-box"
-            :class="{ today: isToday(date) }"
-          >
-            <div class="day">{{ formatDay(date) }}</div>
-            <div class="date">{{ formatDate(date) }}</div>
-          </th>
-        </tr>
-      </thead>
+    <thead>
+  <tr>
+    <th class="sticky-header">Anställd</th>
+
+    <th>
+      <button @click="$emit('back')" class="nav-button">‹</button>
+    </th>
+
+    <th
+      v-for="date in dateRange"
+      :key="date"
+      class="date-box"
+      :class="{ today: isToday(date) }"
+    >
+      <div class="day">{{ formatDay(date) }}</div>
+      <div class="date">{{ formatDate(date) }}</div>
+    </th>
+
+    <th>
+      <button @click="$emit('forward')" class="nav-button">›</button>
+    </th>
+  </tr>
+</thead>
+
+
       <tbody>
         <tr v-for="person in bookings" :key="person.name">
           <td class="person-cell">
@@ -167,4 +178,6 @@ td {
   background-color: #7b5cd6;
   color: white;
 }
+
+
 </style>

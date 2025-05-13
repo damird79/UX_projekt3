@@ -1,9 +1,14 @@
 <template>
-  <BookingGrid :bookings="bookings" :dateRange="dateRange" />
+  <BookingGrid
+    :bookings="bookings"
+    :dateRange="visibleDates"
+    @back="onBack"
+    @forward="onForward"
+  />
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { fetchBookings } from './services/bookingService'
 import BookingGrid from './components/BookingGrid.vue'
 import { format, parseISO, eachDayOfInterval } from 'date-fns'
@@ -34,7 +39,6 @@ onMounted(async () => {
 
   data.forEach(person => {
     const bookedDates = new Set(person.bookings.map(b => format(parseISO(b.date || b.from), 'yyyy-MM-dd')))
-
     allDates.forEach(date => {
       if (!bookedDates.has(date)) {
         const type = mockType()
@@ -50,4 +54,21 @@ onMounted(async () => {
   bookings.value = data
   dateRange.value = allDates
 })
+
+const visibleStartIndex = ref(0)
+const visibleDates = computed(() =>
+  dateRange.value.slice(visibleStartIndex.value, visibleStartIndex.value + 20)
+)
+
+function onBack() {
+  if (visibleStartIndex.value > 0) {
+    visibleStartIndex.value -= 1
+  }
+}
+
+function onForward() {
+  if (visibleStartIndex.value + 20 < dateRange.value.length) {
+    visibleStartIndex.value += 1
+  }
+}
 </script>
