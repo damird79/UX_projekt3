@@ -1,50 +1,39 @@
 <template>
   <div class="grid-container">
+
     <table>
-    <thead>
-  <tr>
-    <th class="sticky-header">Anställd</th>
-
-    <th>
-      <button @click="$emit('back')" class="nav-button">‹</button>
-    </th>
-
-    <th
-      v-for="date in dateRange"
-      :key="date"
-      class="date-box"
-      :class="{ today: isToday(date) }"
-    >
-      <div class="day">{{ formatDay(date) }}</div>
-      <div class="date">{{ formatDate(date) }}</div>
-    </th>
-
-    <th>
-      <button @click="$emit('forward')" class="nav-button">›</button>
-    </th>
-  </tr>
-</thead>
-
+      <thead>
+        <tr>
+          <th class="label-header">Anställd</th>
+          <th class="nav-cell-back">
+            <button @click="$emit('back')" class="nav-button">‹</button>
+          </th>
+          <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
+            <div class="day">{{ formatDay(date) }}</div>
+            <div class="date">{{ formatDate(date) }}</div>
+          </th>
+          <th class="nav-cell-forward">
+            <button @click="$emit('forward')" class="nav-button">›</button>
+          </th>
+        </tr>
+      </thead>
 
       <tbody>
         <tr v-for="person in bookings" :key="person.name">
-          <td class="person-cell">
+          <td class="label-cell">
             <strong>{{ person.name }}</strong><br />
             <small>{{ person.professions.join(' / ') }}</small>
           </td>
-          <td
-            v-for="date in dateRange"
-            :key="date"
-            class="cell"
-            :class="getBookingClass(person.bookings, date)"
-          >
+          <td v-for="date in dateRange" :key="date" class="cell" :class="getBookingClass(person.bookings, date)">
             {{ getBookingLabel(person.bookings, date) }}
           </td>
         </tr>
+
       </tbody>
     </table>
   </div>
 </template>
+
 
 <script setup>
 import { format, parseISO, isWeekend } from 'date-fns'
@@ -135,18 +124,22 @@ td {
   background-color: rgb(173, 5, 7);
   color: white;
 }
+
 .bokad50 {
   background-color: rgb(218, 74, 76);
   color: white;
 }
+
 .prelim100 {
   background-color: rgb(255, 208, 53);
   color: black;
 }
+
 .prelim50 {
   background-color: rgb(255, 237, 149);
   color: black;
 }
+
 .ledig {
   background-color: rgb(173, 243, 185);
   color: black;
@@ -179,5 +172,35 @@ td {
   color: white;
 }
 
+.nav-button {
+  background: transparent;
+  border: none;
+  color: black;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+
+}
+
+.nav-cell-back,
+.nav-cell-forward {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 30px;
+}
+
+
+.nav-cell-back {
+  text-align: right;
+  padding-left: 0.5rem;
+
+}
+
+.nav-cell-forward {
+  text-align: left;
+
+}
 
 </style>
