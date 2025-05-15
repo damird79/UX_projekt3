@@ -3,28 +3,36 @@
 
     <div class="grid-header">
 
-      <div class="view-toggle">
-        <div class="view-btn-day">
-          <button class="view-btn-1">Dag</button>
-        </div>
-        <div class="view-btn-week">
-          <button class="view-btn-2">Vecka</button>
-        </div>
-        <button class="view-btn-month">Månad</button>
-      </div>
-
-
       <table>
         <thead>
           <tr>
+            <th class="view-toggle-cell" rowspan="2">
+              <div class="view-toggle-switch">
+                <button class="toggle-btn" :class="{ active: currentView === 'day' }" @click="$emit('switch', 'day')">
+                  Dag
+                </button>
+                <button class="toggle-btn" :class="{ active: currentView === 'week' }" @click="$emit('switch', 'week')">
+                  Vecka
+                </button>
+                <button class="toggle-btn" :class="{ active: currentView === 'month' }"
+                  @click="$emit('switch', 'month')">
+                  Månad
+                </button>
+              </div>
+            </th>
+
+
 
             <th class="nav-cell-back">
               <button @click="$emit('back')" class="nav-button">‹</button>
             </th>
+
+
             <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
               <div class="day">{{ formatDay(date) }}</div>
               <div class="date">{{ formatDate(date) }}</div>
             </th>
+
             <th class="nav-cell-forward">
               <button @click="$emit('forward')" class="nav-button">›</button>
             </th>
@@ -58,7 +66,8 @@ import { sv } from 'date-fns/locale'
 
 const props = defineProps({
   bookings: Array,
-  dateRange: Array
+  dateRange: Array,
+  currentView: String
 })
 
 function isToday(date) {
@@ -98,7 +107,10 @@ function getBookingLabel(bookings, date) {
 <style scoped>
 .grid-container {
   background-color: rgb(178, 177, 174, 0.89);
+  width: 100vw;
   max-width: 100%;
+  overflow-x: auto;
+
 }
 
 th,
@@ -132,7 +144,7 @@ td {
   font-size: 10px;
   text-align: center;
   white-space: nowrap;
-  min-width: 1.5m;
+  min-width: 1.5rem;
 }
 
 .bokad100 {
@@ -219,26 +231,41 @@ td {
 
 }
 
+.view-toggle-cell {
+  vertical-align: middle;
+  padding: 0.5rem 1rem;
+  background: transparent;
+}
+
 .view-toggle {
   display: flex;
-
+  gap: 0.5rem;
 }
 
-.view-btn-week,
-.view-btn-2 {
-  border-radius: 8px;
+
+
+.view-toggle-switch {
+  display: flex;
+  background-color: white;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #ccc inset;
 }
 
-.view-btn-1,
-.view-btn-2 {
-  background: #eee;
+.toggle-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
   cursor: pointer;
+  color: #666;
+  transition: background 0.2s, color 0.2s;
 }
 
-.view-btn.month {
-  background: #3e3596;
+.toggle-btn.active {
+  background-color: #6d68b3; /* lila */
   color: white;
 }
-
 
 </style>
