@@ -34,8 +34,13 @@ onMounted(async () => {
 
   const data = await fetchBookings(start, end)
 
+<<<<<<< Updated upstream
   const allDates = eachDayOfInterval({ start: parseISO(start), end: parseISO(end) })
     .map(d => format(d, 'yyyy-MM-dd'))
+=======
+  // Extrahera alla unika datum från bokningarnas intervall
+  const dates = new Set();
+>>>>>>> Stashed changes
 
   data.forEach(person => {
     const bookedDates = new Set(person.bookings.map(b => format(parseISO(b.date || b.from), 'yyyy-MM-dd')))
