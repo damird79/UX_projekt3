@@ -1,7 +1,10 @@
-<template>
+
+  <template>
   <BookingGrid
     :bookings="bookings"
     :dateRange="visibleDates"
+    :currentView="selectedView"
+    @switch="selectedView = $event"
     @back="onBack"
     @forward="onForward"
   />

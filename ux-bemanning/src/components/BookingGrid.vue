@@ -264,7 +264,7 @@ td {
 }
 
 .toggle-btn.active {
-  background-color: #6d68b3; 
+  background-color: #6d68b3; /* lila */
   color: white;
 }
 
