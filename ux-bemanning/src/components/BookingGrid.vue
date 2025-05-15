@@ -1,36 +1,53 @@
 <template>
   <div class="grid-container">
 
-    <table>
-      <thead>
-        <tr>
-          <th class="label-header">Anställd</th>
-          <th class="nav-cell-back">
-            <button @click="$emit('back')" class="nav-button">‹</button>
-          </th>
-          <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
-            <div class="day">{{ formatDay(date) }}</div>
-            <div class="date">{{ formatDate(date) }}</div>
-          </th>
-          <th class="nav-cell-forward">
-            <button @click="$emit('forward')" class="nav-button">›</button>
-          </th>
-        </tr>
-      </thead>
+    <div class="grid-header">
 
-      <tbody>
-        <tr v-for="person in bookings" :key="person.name">
-          <td class="label-cell">
-            <strong>{{ person.name }}</strong><br />
-            <small>{{ person.professions.join(' / ') }}</small>
-          </td>
-          <td v-for="date in dateRange" :key="date" class="cell" :class="getBookingClass(person.bookings, date)">
-            {{ getBookingLabel(person.bookings, date) }}
-          </td>
-        </tr>
+      <div class="view-toggle">
+        <div class="view-btn-day">
+          <button class="view-btn-1">Dag</button>
+        </div>
+        <div class="view-btn-week">
+          <button class="view-btn-2">Vecka</button>
+        </div>
+        <button class="view-btn-month">Månad</button>
+      </div>
 
-      </tbody>
-    </table>
+
+      <table>
+        <thead>
+          <tr>
+
+            <th class="nav-cell-back">
+              <button @click="$emit('back')" class="nav-button">‹</button>
+            </th>
+            <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
+              <div class="day">{{ formatDay(date) }}</div>
+              <div class="date">{{ formatDate(date) }}</div>
+            </th>
+            <th class="nav-cell-forward">
+              <button @click="$emit('forward')" class="nav-button">›</button>
+            </th>
+          </tr>
+        </thead>
+
+        <br>
+
+        <tbody>
+          <tr v-for="person in bookings" :key="person.name">
+            <td class="label-cell">
+              <strong>{{ person.name }}</strong><br />
+              <small>{{ person.professions.join(' / ') }}</small>
+            </td>
+            <td v-for="date in dateRange" :key="date" class="cell" :class="getBookingClass(person.bookings, date)">
+              {{ getBookingLabel(person.bookings, date) }}
+            </td>
+            <td class="nav-cell-placeholder"></td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
   </div>
 </template>
 
@@ -81,6 +98,7 @@ function getBookingLabel(bookings, date) {
 <style scoped>
 .grid-container {
   background-color: rgb(178, 177, 174, 0.89);
+  max-width: 100%;
 }
 
 th,
@@ -97,17 +115,13 @@ td {
   border-radius: 8px;
   margin: 4px;
   padding: 8px 10px;
-  min-width: 200px;
   height: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-size: 14px;
-  text-align: left;
 }
 
 .cell {
-  margin: 6px;
   border-radius: 10px;
   height: 48px;
   background-color: #f5f5f5;
@@ -118,6 +132,7 @@ td {
   font-size: 10px;
   text-align: center;
   white-space: nowrap;
+  min-width: 1.5m;
 }
 
 .bokad100 {
@@ -155,6 +170,7 @@ td {
   font-weight: 500;
   color: #333;
   margin: 4px auto;
+  margin-bottom: 2rem;
 }
 
 .date-box .day {
@@ -202,5 +218,27 @@ td {
   text-align: left;
 
 }
+
+.view-toggle {
+  display: flex;
+
+}
+
+.view-btn-week,
+.view-btn-2 {
+  border-radius: 8px;
+}
+
+.view-btn-1,
+.view-btn-2 {
+  background: #eee;
+  cursor: pointer;
+}
+
+.view-btn.month {
+  background: #3e3596;
+  color: white;
+}
+
 
 </style>
