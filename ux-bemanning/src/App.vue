@@ -1,5 +1,74 @@
+<template>
 
-  <template>
+  <div class="filter-bar">
+    <button class="apply-filters" @click="applyFilters" :class="{ active: filtersApplied }">Apply Filters</button>
+    <div class="search-controls">
+      <input class="search-bar" type="text" placeholder="Search..." v-model="searchText" />
+      <button @click="toggleFilterCard" class="filter-toggle">
+        <span>🔍 Filter</span>
+      </button>
+    </div>
+  </div>
+
+  <div v-if="showFilterCard" class="filter-card">
+    <div class="filter-header">
+      <span>🔍 Filter</span>
+      <button @click="toggleFilterCard">✖</button>
+    </div>
+
+    <div class="filter-section">
+      <strong>Bookings</strong>
+      <div class="filter-box">
+        <label v-for="status in bookingStatuses" :key="status">
+          <input type="radio" v-model="selectedBooking" :value="status" />
+          {{ status }}
+        </label>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <strong>Occupation</strong>
+      <div class="filter-buttons">
+        <button
+          v-for="occ in occupations"
+          :key="occ"
+          @click="toggleSelection(occ, 'occupations')"
+          :class="{ selected: selectedOccupations.includes(occ) }"
+        >
+          {{ occ }}
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <strong>Experience</strong>
+      <div class="filter-box">
+        <button
+          v-for="level in experienceLevels"
+          :key="level"
+          @click="toggleSelection(level, 'experience')"
+          :class="{ selected: selectedExperience.includes(level) }"
+        >
+          {{ level }}
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <strong>Date</strong>
+      <div class="filter-box">
+        <select v-model="selectedDate">
+          <option v-for="date in availableDates" :key="date" :value="date">{{ date }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button @click="clearFilters">Clear Search</button>
+      <button @click="applyFilters">Search</button>
+    </div>
+  </div>
+
   <BookingGrid
     :bookings="bookings"
     :dateRange="visibleDates"
@@ -16,8 +85,48 @@ import { fetchBookings } from './services/bookingService'
 import BookingGrid from './components/BookingGrid.vue'
 import { format, parseISO, eachDayOfInterval } from 'date-fns'
 
+const showFilterCard = ref(false);
+const searchText = ref('');
+const filtersApplied = ref(false);
+
+const bookingStatuses = ['All', 'Absence', 'Boked', 'Preliminary booking', 'Available'];
+const occupations = ['All', 'Carpenter', 'Elektrician', 'Painter', 'Mason', 'Plumber'];
+const experienceLevels = ['Junior', 'Middle', 'Senior'];
+const availableDates = [
+  '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10', '2025-04-11',
+  '2025-04-14', '2025-04-15', '2025-04-16', '2025-04-17', '2025-04-18'
+];
+const selectedBooking = ref('All');
+const selectedOccupations = ref([]);
+const selectedExperience = ref([]);
+const selectedDate = ref('');
+
 const bookings = ref([])
 const dateRange = ref([])
+
+function toggleFilterCard() {
+  showFilterCard.value = !showFilterCard.value;
+}
+
+function toggleSelection(value, type) {
+  const list = type === 'occupations' ? selectedOccupations.value : selectedExperience.value;
+  const index = list.indexOf(value);
+  index >= 0 ? list.splice(index, 1) : list.push(value);
+}
+
+function clearFilters() {
+  selectedBooking.value = 'All';
+  selectedOccupations.value = [];
+  selectedExperience.value = [];
+  selectedDate.value = '';
+  filtersApplied.value = false;
+  showFilterCard.value = false;
+}
+
+function applyFilters() {
+  filtersApplied.value = true;
+  showFilterCard.value = false;
+}
 
 function mockType() {
   const types = ['booked', 'preliminary', 'absence', 'free']

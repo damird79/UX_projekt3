@@ -73,6 +73,82 @@ button:focus-visible {
   }
 }
 
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
+.apply-filters {
+  background-color: #ccc;
+}
+.apply-filters.active {
+  background-color: #8bc34a;
+}
+
+.search-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.search-bar {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.filter-toggle {
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.filter-card {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-section {
+  margin-bottom: 1rem;
+}
+
+.filter-box {
+  background: #f9f9f9;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.filter-buttons button,
+.filter-box button {
+  margin: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-buttons button.selected,
+.filter-box button.selected {
+  background: #4caf50;
+  color: white;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+}
 
 
