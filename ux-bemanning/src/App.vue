@@ -3,7 +3,7 @@
   <div class="filter-bar">
     <button class="apply-filters" @click="applyFilters" :class="{ active: filtersApplied }">Apply Filters</button>
     <div class="search-controls">
-      <input class="search-bar" type="text" placeholder="Search..." v-model="searchText" />
+      <input class="search-bar" type="text" placeholder="Search after name/profession/experience" v-model="searchText" />
       <button @click="toggleFilterCard" class="filter-toggle">
         <span>🔍 Filter</span>
       </button>
