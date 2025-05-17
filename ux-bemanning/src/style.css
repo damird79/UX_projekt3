@@ -93,8 +93,9 @@ border: 1px solid black;
 
 .search-controls {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .search-bar {
@@ -102,6 +103,7 @@ border: 1px solid black;
   font-size: 1rem;
   border-radius: 80px;
   border: 1px solid #ccc;
+  width: 32ch;
 }
 
 .filter-toggle {
@@ -170,4 +172,65 @@ border: 1px solid black;
   justify-content: flex-end;
 }
 
+.search-bar-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 32ch;
+}
 
+.active-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.chip {
+  background: #7273ac;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 80px;
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.chip button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  margin-left: 0.4em;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.search-bar-wrapper {
+  flex: 1;
+  min-width: 240px;
+  max-width: 480px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 80px;
+  padding: 0.25rem 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  padding: 0.4rem 0;
+  min-width: 80px;
+}
