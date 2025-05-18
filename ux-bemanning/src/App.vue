@@ -72,8 +72,9 @@
     </div>
   </div>
 
-  <BookingGrid :bookings="bookings" :dateRange="visibleDates" :currentView="selectedView"
-    @switch="selectedView = $event" @back="onBack" @forward="onForward" />
+  <BookingGrid :bookings="filteredBookings" :dateRange="visibleDates" :currentView="selectedView"
+    :selectedWorkers="selectedWorkers" @toggle-worker="toggleWorkerSelection" @switch="selectedView = $event"
+    @back="onBack" @forward="onForward" />
 </template>
 
 <script setup>
@@ -97,9 +98,11 @@ const selectedBooking = ref('All');
 const selectedOccupations = ref([]);
 const selectedExperience = ref([]);
 const selectedDate = ref('');
+const selectedWorkers = ref([]);
 
-const bookings = ref([])
-const dateRange = ref([])
+const bookings = ref([]);
+const dateRange = ref([]);
+
 
 function toggleFilterCard() {
   showFilterCard.value = !showFilterCard.value;
@@ -109,6 +112,12 @@ function toggleSelection(value, type) {
   const list = type === 'occupations' ? selectedOccupations.value : selectedExperience.value;
   const index = list.indexOf(value);
   index >= 0 ? list.splice(index, 1) : list.push(value);
+}
+
+function toggleWorkerSelection(name) {
+  const i = selectedWorkers.value.indexOf(name)
+  if (i >= 0) selectedWorkers.value.splice(i, 1)
+  else selectedWorkers.value.push(name)
 }
 
 function clearFilters() {
@@ -156,6 +165,10 @@ const activeChips = computed(() => {
     chips.push({ key: 'date', label: selectedDate.value })
   }
 
+  selectedWorkers.value.forEach(name => {
+    chips.push({ key: `worker-${name}`, label: name })
+  })
+
   return chips
 })
 
@@ -166,6 +179,9 @@ function removeChip(chip) {
   }
   else if (chip.key.startsWith('exp-')) {
     selectedExperience.value = selectedExperience.value.filter(exp => `exp-${exp}` !== chip.key)
+  }
+  else if (chip.key.startsWith('worker-')) {
+    selectedWorkers.value = selectedWorkers.value.filter(n => `worker-${n}` !== chip.key)
   }
   else if (chip.key === 'date') selectedDate.value = ''
 }
@@ -195,6 +211,11 @@ onMounted(async () => {
 
   bookings.value = data
   dateRange.value = allDates
+})
+
+const filteredBookings = computed(() => {
+  if (selectedWorkers.value.length === 0) return bookings.value
+  return bookings.value.filter(worker => selectedWorkers.value.includes(worker.name))
 })
 
 const visibleStartIndex = ref(0)

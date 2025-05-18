@@ -44,6 +44,8 @@
         <tbody>
           <tr v-for="person in bookings" :key="person.name">
             <td class="label-cell">
+              <input type="checkbox" :checked="selectedWorkers.includes(person.name)"
+                @change="$emit('toggle-worker', person.name)" style="margin-right: 6px;" />
               <strong>{{ person.name }}</strong><br />
               <small>{{ person.professions.join(' / ') }}</small>
             </td>
@@ -67,8 +69,10 @@ import { sv } from 'date-fns/locale'
 const props = defineProps({
   bookings: Array,
   dateRange: Array,
-  currentView: String
+  currentView: String,
+  selectedWorkers: Array
 })
+defineEmits(['toggle-worker'])
 
 function isToday(date) {
   const today = format(new Date(), 'yyyy-MM-dd')
@@ -264,8 +268,8 @@ td {
 }
 
 .toggle-btn.active {
-  background-color: #6d68b3; /* lila */
+  background-color: #6d68b3;
+  /* lila */
   color: white;
 }
-
 </style>
