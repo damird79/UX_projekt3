@@ -112,7 +112,7 @@ function getBookingClass(bookings, date) {
   const dayBookings = bookings.filter(b => b.date === dateStr && typeof b.type === 'string')
 
   if (isWeekendDay) return 'weekend'
-  if (!dayBookings.length) return 'tillganglig'
+  if (!dayBookings.length) return 'available'
 
   if (
     dayBookings.length === 1 &&
@@ -133,20 +133,20 @@ function getBookingClass(bookings, date) {
   if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50'
   if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50'
 
-  return 'tillganglig'
+  return 'available'
 }
 
 function getBookingTypeClass(bookings, date) {
-    const dateStr = format(parseISO(date), 'yyyy-MM-dd')
-    const booking = bookings.find(b =>
-      b.date === dateStr &&
-      (b.type === 'preliminary' || b.type === 'booked') &&
-      b.percentage === 50
-    )
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
+  const booking = bookings.find(b =>
+    b.date === dateStr &&
+    (b.type === 'preliminary' || b.type === 'booked') &&
+    b.percentage === 50
+  )
 
-    if (!booking) return ''
-    return booking.type === 'booked' ? 'booked50' : 'prelim50'
-  }
+  if (!booking) return ''
+  return booking.type === 'booked' ? 'booked50' : 'prelim50'
+}
 
 function getBookingLabel(bookings, date) {
   const dateStr = format(parseISO(date), 'yyyy-MM-dd')
@@ -314,11 +314,6 @@ td {
   color: white;
 }
 
-.tillganglig {
-  background-color: rgb(176, 243, 185);
-  color: black;
-}
-
 .spacer-cell {
   width: 10px;
   background-color: transparent;
@@ -359,7 +354,12 @@ td {
 }
 
 .available {
-  background-color: #22c55e;
+  background-color: rgb(176, 243, 185);
+  color: black;
+}
+
+.cell.available {
+  background-color: rgb(176, 243, 185);
   color: black;
 }
 
@@ -368,8 +368,8 @@ td {
   padding: 0;
 }
 
-.cell.half-booked > div,
-.cell.half-absence > div {
+.cell.half-booked>div,
+.cell.half-absence>div {
   width: 100%;
   height: 100%;
 }
