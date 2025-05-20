@@ -128,10 +128,10 @@ td {
 
 .person-cell {
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 6px;
   margin: 4px;
   padding: 8px 10px;
-  height: 60px;
+  height: 70px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -139,7 +139,7 @@ td {
 
 .cell {
   border-radius: 10px;
-  height: 48px;
+  height: 5rem;
   background-color: #f5f5f5;
   justify-content: center;
   align-items: center;
@@ -148,7 +148,8 @@ td {
   font-size: 10px;
   text-align: center;
   white-space: nowrap;
-  min-width: 1.5rem;
+  min-width: 1.3rem;
+
 }
 
 .bokad100 {
@@ -269,7 +270,6 @@ td {
 
 .toggle-btn.active {
   background-color: #6d68b3;
-  /* lila */
   color: white;
 }
 </style>

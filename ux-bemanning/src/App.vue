@@ -86,6 +86,8 @@ import { format, parseISO, eachDayOfInterval } from 'date-fns'
 const showFilterCard = ref(false);
 const searchText = ref('');
 const filtersApplied = ref(false);
+const selectedView = ref('month') 
+
 
 const bookingStatuses = ['All', 'Absence', 'Booked', 'Preliminary booking', 'Available'];
 const occupations = ['All', 'Carpenter', 'Electrician', 'Painter', 'Mason', 'Plumber'];
