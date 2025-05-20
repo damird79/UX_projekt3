@@ -38,24 +38,37 @@
             </th>
           </tr>
         </thead>
-
+        
         <br>
-
+        
         <tbody>
           <tr v-for="person in bookings" :key="person.name">
             <td class="label-cell">
               <input type="checkbox" :checked="selectedWorkers.includes(person.name)"
-                @change="$emit('toggle-worker', person.name)" style="margin-right: 6px;" />
+              @change="$emit('toggle-worker', person.name)" style="margin-right: 6px;" />
               <strong>{{ person.name }}</strong><br />
               <small>{{ person.professions.join(' / ') }}</small>
             </td>
+
+            <br>
+            
             <td v-for="date in dateRange" :key="date" class="cell" :class="getBookingClass(person.bookings, date)">
-              {{ getBookingLabel(person.bookings, date) }}
+              <template v-if="getBookingClass(person.bookings, date) === 'half-absence'">
+                <div class="half-absence-container">
+                  <div class="half absence">Frånvaro</div>
+                  <div class="half booked">Bokad</div>
+                </div>
+              </template>
+              <template v-else>
+                {{ getBookingLabel(person.bookings, date) }}
+              </template>
             </td>
-            <td class="nav-cell-placeholder"></td>
+            
+       
+            
           </tr>
         </tbody>
-
+        
       </table>
     </div>
   </div>
@@ -88,14 +101,24 @@ function formatDay(date) {
 }
 
 function getBookingClass(bookings, date) {
-  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
-  const booking = bookings.find(b => b.date === dateStr)
-  if (!booking || isWeekend(parseISO(date))) return ''
-  if (booking.type === 'absence') return ''
-  if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50'
-  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50'
-  return ''
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd');
+  const dayBookings = bookings.filter(b => b.date === dateStr);
+
+  if (!dayBookings.length || isWeekend(parseISO(date))) return '';
+
+  const hasAbsence = dayBookings.some(b => b.type === 'absence');
+  const hasBooking = dayBookings.some(b => b.type === 'booked' || b.type === 'preliminary');
+
+  if (hasAbsence && hasBooking) return 'half-absence';
+  if (hasAbsence) return 'absence-only';
+
+  const booking = dayBookings[0];
+  if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50';
+  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50';
+
+  return '';
 }
+
 
 function getBookingLabel(bookings, date) {
   const dateStr = format(parseISO(date), 'yyyy-MM-dd')
@@ -113,7 +136,6 @@ function getBookingLabel(bookings, date) {
   background-color: rgb(178, 177, 174, 0.89);
   width: 100vw;
   max-width: 100%;
-  overflow-x: auto;
 
 }
 
@@ -133,22 +155,17 @@ td {
   padding: 8px 10px;
   height: 70px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+
 }
 
 .cell {
   border-radius: 10px;
   height: 5rem;
   background-color: #f5f5f5;
-  justify-content: center;
-  align-items: center;
   writing-mode: vertical-lr;
-  text-orientation: mixed;
   font-size: 10px;
-  text-align: center;
-  white-space: nowrap;
-  min-width: 1.3rem;
+  min-width: 2rem;
+  
 
 }
 
