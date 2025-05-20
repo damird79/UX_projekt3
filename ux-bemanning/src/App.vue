@@ -199,16 +199,25 @@ onMounted(async () => {
 
   data.forEach(person => {
     const bookedDates = new Set(person.bookings.map(b => format(parseISO(b.date || b.from), 'yyyy-MM-dd')))
-    allDates.forEach(date => {
-      if (!bookedDates.has(date)) {
-        const type = mockType()
-        person.bookings.push({
-          date,
-          type,
-          percentage: mockPercentage(type),
-        })
-      }
-    })
+   allDates.forEach(date => {
+  if (!bookedDates.has(date)) {
+    const chance = Math.random();
+    if (chance < 0.2) {
+      person.bookings.push(
+        { date, type: 'absence', percentage: 100 },
+        { date, type: 'booked', percentage: 50 }
+      );
+    } else {
+      const type = mockType();
+      person.bookings.push({
+        date,
+        type,
+        percentage: mockPercentage(type),
+      });
+    }
+  }
+});
+
   })
 
   bookings.value = data

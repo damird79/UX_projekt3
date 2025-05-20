@@ -119,7 +119,6 @@ function getBookingClass(bookings, date) {
   return '';
 }
 
-
 function getBookingLabel(bookings, date) {
   const dateStr = format(parseISO(date), 'yyyy-MM-dd')
   const booking = bookings.find(b => b.date === dateStr)
@@ -199,7 +198,7 @@ td {
   border-radius: 6px;
   padding: 4px 0;
   width: 70px;
-  height: 52px;
+  height: 80px;
   font-size: 12px;
   font-weight: 500;
   color: #333;
@@ -287,6 +286,10 @@ td {
 
 .toggle-btn.active {
   background-color: #6d68b3;
+  color: white;
+}
+.absence-only {
+  background-color: rgb(76, 53, 244);
   color: white;
 }
 </style>

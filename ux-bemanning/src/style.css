@@ -213,7 +213,6 @@ border: 1px solid black;
   justify-content: flex-end;
 }
 
-/* --- Globala stilar för tvåfärgade celler --- */
 
 .cell.half-absence {
   padding: 0;
@@ -238,7 +237,7 @@ border: 1px solid black;
 }
 
 .half-absence-container .absence {
-  background-color: #bbb;
+  background-color: rgb(76, 53, 244);
   color: black;
 }
 
