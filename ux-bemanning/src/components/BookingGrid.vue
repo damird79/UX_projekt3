@@ -1,8 +1,6 @@
 <template>
   <div class="grid-container">
-
     <div class="grid-header">
-
       <table>
         <thead>
           <tr>
@@ -14,66 +12,51 @@
                 <button class="toggle-btn" :class="{ active: currentView === 'week' }" @click="$emit('switch', 'week')">
                   Vecka
                 </button>
-                <button class="toggle-btn" :class="{ active: currentView === 'month' }"
-                  @click="$emit('switch', 'month')">
+                <button class="toggle-btn" :class="{ active: currentView === 'month' }" @click="$emit('switch', 'month')">
                   Månad
                 </button>
               </div>
             </th>
-
-
-
             <th class="nav-cell-back">
               <button @click="$emit('back')" class="nav-button">‹</button>
             </th>
-
-
             <th v-for="date in dateRange" :key="date" class="date-box" :class="{ today: isToday(date) }">
               <div class="day">{{ formatDay(date) }}</div>
               <div class="date">{{ formatDate(date) }}</div>
             </th>
-
             <th class="nav-cell-forward">
               <button @click="$emit('forward')" class="nav-button">›</button>
             </th>
           </tr>
         </thead>
-        
-        <br>
-        
         <tbody>
+          <tr class="spacer-row">
+            <td :colspan="dateRange.length + 3" style="height: 10px; padding: 0; border: none;"></td>
+          </tr>
           <tr v-for="person in bookings" :key="person.name">
             <td class="label-cell">
-              <input type="checkbox" :checked="selectedWorkers.includes(person.name)"
-              @change="$emit('toggle-worker', person.name)" style="margin-right: 6px;" />
+              <input type="checkbox" :checked="selectedWorkers.includes(person.name)" @change="$emit('toggle-worker', person.name)" style="margin-right: 6px;" />
               <strong>{{ person.name }}</strong><br />
               <small>{{ person.professions.join(' / ') }}</small>
             </td>
-
-            <br>
-            
-            <td v-for="date in dateRange" :key="date" class="cell" :class="getBookingClass(person.bookings, date)">
+            <td class="spacer-cell"></td>
+            <td v-for="date in dateRange" :key="date" :class="['cell', getBookingClass(person.bookings, date)]">
               <template v-if="getBookingClass(person.bookings, date) === 'half-absence'">
                 <div class="half-absence-container">
                   <div class="half absence">Frånvaro</div>
-                  <div class="half booked">Bokad</div>
+                  <div class="half booked">{{ getSplitLabel(person.bookings, date) }}</div>
                 </div>
               </template>
               <template v-else>
                 {{ getBookingLabel(person.bookings, date) }}
               </template>
             </td>
-            
-       
-            
           </tr>
         </tbody>
-        
       </table>
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { format, parseISO, isWeekend } from 'date-fns'
@@ -100,33 +83,46 @@ function formatDay(date) {
   return format(parseISO(date), 'EEE', { locale: sv })
 }
 
+function getSplitLabel(bookings, date) {
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
+  const booking = bookings.find(b => b.date === dateStr && (b.type === 'booked' || b.type === 'preliminary'))
+  if (!booking) return ''
+  if (booking.type === 'booked') return booking.percentage === 100 ? 'Bokad' : 'Bokad 50%'
+  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'Prelim 100%' : 'Prelim 50%'
+  return ''
+}
+
 function getBookingClass(bookings, date) {
-  const dateStr = format(parseISO(date), 'yyyy-MM-dd');
-  const dayBookings = bookings.filter(b => b.date === dateStr);
+  const dateStr = format(parseISO(date), 'yyyy-MM-dd')
+  const isWeekendDay = isWeekend(parseISO(date))
 
-  if (!dayBookings.length || isWeekend(parseISO(date))) return '';
+  const dayBookings = bookings.filter(b => b.date === dateStr && typeof b.type === 'string')
 
-  const hasAbsence = dayBookings.some(b => b.type === 'absence');
-  const hasBooking = dayBookings.some(b => b.type === 'booked' || b.type === 'preliminary');
+  if (isWeekendDay) return 'weekend'
+  if (!dayBookings.length) return 'tillganglig'
 
-  if (hasAbsence && hasBooking) return 'half-absence';
-  if (hasAbsence) return 'absence-only';
+  const hasAbsence = dayBookings.some(b => b.type === 'absence')
+  const hasBooking = dayBookings.some(b => b.type === 'booked' || b.type === 'preliminary')
 
-  const booking = dayBookings[0];
-  if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50';
-  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50';
+  if (hasAbsence && hasBooking) return 'half-absence'
+  if (hasAbsence) return 'absence-only'
 
-  return '';
+  const booking = dayBookings[0]
+  if (booking.type === 'booked') return booking.percentage === 100 ? 'bokad100' : 'bokad50'
+  if (booking.type === 'preliminary') return booking.percentage === 100 ? 'prelim100' : 'prelim50'
+
+  return 'tillganglig'
 }
 
 function getBookingLabel(bookings, date) {
   const dateStr = format(parseISO(date), 'yyyy-MM-dd')
   const booking = bookings.find(b => b.date === dateStr)
-  if (!booking || isWeekend(parseISO(date))) return ''
+  if (isWeekend(parseISO(date))) return 'Helg'
+  if (!booking) return 'Tillgänglig'
   if (booking.type === 'absence') return 'Frånvaro'
   if (booking.type === 'booked') return booking.percentage === 100 ? 'Bokad' : 'Bokad 50%'
   if (booking.type === 'preliminary') return booking.percentage === 100 ? 'Prelim 100%' : 'Prelim 50%'
-  return ''
+  return 'Tillgänglig'
 }
 </script>
 
@@ -135,7 +131,6 @@ function getBookingLabel(bookings, date) {
   background-color: rgb(178, 177, 174, 0.89);
   width: 100vw;
   max-width: 100%;
-
 }
 
 th,
@@ -154,7 +149,6 @@ td {
   padding: 8px 10px;
   height: 70px;
   display: flex;
-
 }
 
 .cell {
@@ -164,8 +158,6 @@ td {
   writing-mode: vertical-lr;
   font-size: 10px;
   min-width: 2rem;
-  
-
 }
 
 .bokad100 {
@@ -229,7 +221,6 @@ td {
   cursor: pointer;
   padding: 0;
   outline: none;
-
 }
 
 .nav-cell-back,
@@ -240,16 +231,13 @@ td {
   width: 30px;
 }
 
-
 .nav-cell-back {
   text-align: right;
   padding-left: 0.5rem;
-
 }
 
 .nav-cell-forward {
   text-align: left;
-
 }
 
 .view-toggle-cell {
@@ -262,8 +250,6 @@ td {
   display: flex;
   gap: 0.5rem;
 }
-
-
 
 .view-toggle-switch {
   display: flex;
@@ -288,8 +274,21 @@ td {
   background-color: #6d68b3;
   color: white;
 }
+
 .absence-only {
   background-color: rgb(76, 53, 244);
   color: white;
+}
+
+.tillganglig {
+  background-color: rgb(176, 243, 185);
+  color: black;
+}
+
+.spacer-cell {
+  width: 10px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }
 </style>
